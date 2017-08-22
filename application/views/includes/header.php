@@ -41,9 +41,9 @@
         <!-- Logo -->
         <a href="<?php echo base_url(); ?>" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
-          <span class="logo-mini"><b>CI</b>AS</span>
+          <span class="logo-mini"><b>SM</b>BM</span>
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>CodeInsect</b>AS</span>
+          <span class="logo-lg"><b>SandeshMarkting</b>BM</span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">
@@ -96,16 +96,32 @@
               </a>
             </li>
             <li class="treeview">
-              <a href="#" >
-                <i class="fa fa-plane"></i>
-                <span>New Task</span>
+              <a href="#">
+                <i class="fa fa-fire-extinguisher"></i>
+                <span>Product</span>
               </a>
+			  <ul class="treeview-menu" style="display: none;">
+				<li><a href="#"><i class="fa fa-circle-o"></i> Add Product</a></li>
+				<li><a href="#"><i class="fa fa-circle-o"></i> List Product</a></li>
+				<li><a href="#"><i class="fa fa-circle-o"></i> Add Product Items</a></li>
+				<li><a href="#"><i class="fa fa-circle-o"></i> List Product Item </a></li>
+			  </ul>
             </li>
             <li class="treeview">
               <a href="#" >
-                <i class="fa fa-ticket"></i>
-                <span>My Tasks</span>
+                <i class="fa fa-group"></i>
+                <span>Group</span>
               </a>
+			  <ul class="treeview-menu" style="display: none;">
+				<li><a href="#"><i class="fa fa-circle-o"></i>Add Group</a></li>
+				<li><a href="#"><i class="fa fa-circle-o"></i>List Group</a></li>
+				<li><a href="#"><i class="fa fa-circle-o"></i>Add Group Customer</a></li>
+				<li><a href="#"><i class="fa fa-circle-o"></i>List Group Customer</a></li>
+				<li><a href="#"><i class="fa fa-circle-o"></i>Add Group Product Rate</a></li>
+				<li><a href="#"><i class="fa fa-circle-o"></i>List Group Product Rate </a></li>
+				<li><a href="#"><i class="fa fa-circle-o"></i>Add Group Product Package</a></li>
+				<li><a href="#"><i class="fa fa-circle-o"></i>List Group Product Package</a></li>
+			  </ul>
             </li>
             <?php
             if($role == ROLE_ADMIN || $role == ROLE_MANAGER)
@@ -113,15 +129,23 @@
             ?>
             <li class="treeview">
               <a href="#" >
-                <i class="fa fa-thumb-tack"></i>
-                <span>Task Status</span>
+                <i class="fa fa-gears"></i>
+                <span>Service Entry</span>
               </a>
+			  <ul class="treeview-menu" style="display: none;">
+				<li><a href="#"><i class="fa fa-circle-o"></i> Add Service</a></li>
+				<li><a href="#"><i class="fa fa-circle-o"></i> List Service</a></li>
+			  </ul>
             </li>
             <li class="treeview">
               <a href="#" >
-                <i class="fa fa-upload"></i>
-                <span>Task Uploads</span>
+                <i class="fa fa-files-o"></i>
+                <span>Billing</span>
               </a>
+			  <ul class="treeview-menu" style="display: none;">
+				<li><a href="#"><i class="fa fa-circle-o"></i> Generate Bills</li>
+				<li><a href="#"><i class="fa fa-circle-o"></i> View Bills</a></li>
+			  </ul>
             </li>
             <?php
             }
@@ -134,12 +158,7 @@
                 <span>Users</span>
               </a>
             </li>
-            <li class="treeview">
-              <a href="#" >
-                <i class="fa fa-files-o"></i>
-                <span>Reports</span>
-              </a>
-            </li>
+            
             <?php
             }
             ?>

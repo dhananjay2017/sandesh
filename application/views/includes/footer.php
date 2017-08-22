@@ -2,9 +2,13 @@
 
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
-          <b>CodeInsect</b> Admin System | Version 1.0
+          <b>SandeshMarketing</b> Admin System
         </div>
-        <strong>Copyright &copy; 2014-2015 <a href="<?php echo base_url(); ?>">CodeInsect</a>.</strong> All rights reserved.
+        <strong><script type="text/JavaScript">
+var theDate=new Date()
+document.write("© " + theDate.getFullYear())
+</script>
+ <a href="<?php echo base_url(); ?>">SandeshMarketing</a>.</strong> All rights reserved.
     </footer>
     
     <!-- jQuery UI 1.11.2 -->
