@@ -72,10 +72,10 @@ class Products_model extends CI_Model
      * This function is used to add new user to system
      * @return number $insert_id : This is last inserted id
      */
-    function addNewUser($userInfo)
+    function addNewProduct($userInfo)
     {
         $this->db->trans_start();
-        $this->db->insert('tbl_users', $userInfo);
+        $this->db->insert('tbl_products', $userInfo);
         
         $insert_id = $this->db->insert_id();
         
@@ -89,17 +89,32 @@ class Products_model extends CI_Model
      * @param number $userId : This is user id
      * @return array $result : This is user information
      */
-    function getUserInfo($userId)
+    function getProductInfo($prodId)
     {
-        $this->db->select('userId, name, email, mobile, roleId');
-        $this->db->from('tbl_users');
-        $this->db->where('isDeleted', 0);
-		$this->db->where('roleId !=', 1);
-        $this->db->where('userId', $userId);
+        $this->db->select('*');
+        $this->db->from('tbl_products');
+        $this->db->where('id', $prodId);
         $query = $this->db->get();
         
         return $query->result();
     }
+	
+	 /**
+     * This function used to delete product  by id
+     * @param number $userId : This is user id
+     * @return array $result : This is user information
+     */
+    function deleteProd($prodId)
+    {
+	  
+	    $this->db->where('id', $prodId);
+        $deleted = $this->db->delete('tbl_products'); 
+		if($deleted)
+          return true;
+		else
+		  return false;
+    }
+	
     
     
     /**
@@ -107,10 +122,10 @@ class Products_model extends CI_Model
      * @param array $userInfo : This is users updated information
      * @param number $userId : This is user id
      */
-    function editUser($userInfo, $userId)
+    function editProduct($prodInfo, $prodId)
     {
-        $this->db->where('userId', $userId);
-        $this->db->update('tbl_users', $userInfo);
+        $this->db->where('id', $prodId);
+        $this->db->update('tbl_products', $prodInfo);
         
         return TRUE;
     }

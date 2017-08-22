@@ -58,12 +58,9 @@ class Products extends BaseController
         }
         else
         {
-            $this->load->model('user_model');
-            $data['roles'] = $this->user_model->getUserRoles();
-            
             $this->global['pageTitle'] = 'Sandesh : Add New User';
 
-            $this->loadViews("addNewProducts", $this->global, $data, NULL);
+            $this->loadViews("addNewProduct", $this->global, NULL, NULL);
         }
     }
 
@@ -76,9 +73,9 @@ class Products extends BaseController
         $email = $this->input->post("email");
 
         if(empty($userId)){
-            $result = $this->user_model->checkEmailExists($email);
+            $result = $this->products_model->checkEmailExists($email);
         } else {
-            $result = $this->user_model->checkEmailExists($email, $userId);
+            $result = $this->products_model->checkEmailExists($email, $userId);
         }
 
         if(empty($result)){ echo("true"); }
@@ -88,7 +85,7 @@ class Products extends BaseController
     /**
      * This function is used to add new user to the system
      */
-    function addNewUser()
+    function addNewProd()
     {
         if($this->isAdmin() == TRUE)
         {
@@ -98,12 +95,7 @@ class Products extends BaseController
         {
             $this->load->library('form_validation');
             
-            $this->form_validation->set_rules('fname','Full Name','trim|required|max_length[128]|xss_clean');
-            $this->form_validation->set_rules('email','Email','trim|required|valid_email|xss_clean|max_length[128]');
-            $this->form_validation->set_rules('password','Password','required|max_length[20]');
-            $this->form_validation->set_rules('cpassword','Confirm Password','trim|required|matches[password]|max_length[20]');
-            $this->form_validation->set_rules('role','Role','trim|required|numeric');
-            $this->form_validation->set_rules('mobile','Mobile Number','required|min_length[10]|xss_clean');
+            $this->form_validation->set_rules('name','Name','trim|required|max_length[128]|xss_clean');
             
             if($this->form_validation->run() == FALSE)
             {
@@ -111,28 +103,24 @@ class Products extends BaseController
             }
             else
             {
-                $name = ucwords(strtolower($this->input->post('fname')));
-                $email = $this->input->post('email');
-                $password = $this->input->post('password');
-                $roleId = $this->input->post('role');
-                $mobile = $this->input->post('mobile');
+                $name = ucwords(strtolower($this->input->post('name')));
+                $status = $this->input->post('status');
                 
-                $userInfo = array('email'=>$email, 'password'=>getHashedPassword($password), 'roleId'=>$roleId, 'name'=> $name,
-                                    'mobile'=>$mobile, 'createdBy'=>$this->vendorId, 'createdDtm'=>date('Y-m-d H:i:s'));
+                $productInfo = array('name'=> $name,'status'=>$status);
                 
-                $this->load->model('user_model');
-                $result = $this->user_model->addNewUser($userInfo);
+                
+                $result = $this->products_model->addNewProduct($productInfo);
                 
                 if($result > 0)
                 {
-                    $this->session->set_flashdata('success', 'New User created successfully');
+                    $this->session->set_flashdata('success', 'New product has been created successfully');
                 }
                 else
                 {
-                    $this->session->set_flashdata('error', 'User creation failed');
+                    $this->session->set_flashdata('error', 'Product creation failed');
                 }
                 
-                redirect('addNew');
+                redirect('addNewProduct');
             }
         }
     }
@@ -142,33 +130,65 @@ class Products extends BaseController
      * This function is used load user edit information
      * @param number $userId : Optional : This is user id
      */
-    function editOld($userId = NULL)
+    function editProduct($productId = NULL)
     {
-        if($this->isAdmin() == TRUE || $userId == 1)
+        if($this->isAdmin() == TRUE)
         {
             $this->loadThis();
         }
         else
         {
-            if($userId == null)
+            if($productId == null)
             {
-                redirect('userListing');
+                redirect('productListing');
             }
             
-            $data['roles'] = $this->user_model->getUserRoles();
-            $data['userInfo'] = $this->user_model->getUserInfo($userId);
+            $data['productInfo'] = $this->products_model->getProductInfo($productId);
             
-            $this->global['pageTitle'] = 'Sandesh : Edit User';
+            $this->global['pageTitle'] = 'Sandesh : Edit Product';
             
-            $this->loadViews("editOld", $this->global, $data, NULL);
+            $this->loadViews("editProduct", $this->global, $data, NULL);
         }
     }
+	
+	 function deleteProduct()
+		{
+		   $productId = $this->input->post('prodId');
+
+			$data = array();
+			
+			if($this->isAdmin() == TRUE)
+			{
+				$this->loadThis();
+			}
+			else
+			{
+				if($productId == null)
+				{
+					$data['status'] = false;
+				}
+				
+				$deleted = $this->products_model->deleteProd($productId);
+
+			}
+			
+			if($deleted)
+                {
+                    $data['status'] = true;
+                }
+                else
+                {
+                    $data['status'] = false;
+                }
+                
+                echo json_encode($data);
+		}
     
     
     /**
      * This function is used to edit the user information
      */
-    function editUser()
+    function editProd()
     {
         if($this->isAdmin() == TRUE)
         {
@@ -178,53 +198,37 @@ class Products extends BaseController
         {
             $this->load->library('form_validation');
             
-            $userId = $this->input->post('userId');
+            $prodId = $this->input->post('prodId');
             
-            $this->form_validation->set_rules('fname','Full Name','trim|required|max_length[128]|xss_clean');
-            $this->form_validation->set_rules('email','Email','trim|required|valid_email|xss_clean|max_length[128]');
-            $this->form_validation->set_rules('password','Password','matches[cpassword]|max_length[20]');
-            $this->form_validation->set_rules('cpassword','Confirm Password','matches[password]|max_length[20]');
-            $this->form_validation->set_rules('role','Role','trim|required|numeric');
-            $this->form_validation->set_rules('mobile','Mobile Number','required|min_length[10]|xss_clean');
+            $this->form_validation->set_rules('name','Full Name','trim|required|max_length[128]|xss_clean');
             
             if($this->form_validation->run() == FALSE)
             {
-                $this->editOld($userId);
+                $this->editProduct($prodId);
             }
             else
             {
-                $name = ucwords(strtolower($this->input->post('fname')));
-                $email = $this->input->post('email');
-                $password = $this->input->post('password');
-                $roleId = $this->input->post('role');
-                $mobile = $this->input->post('mobile');
+                $name = ucwords(strtolower($this->input->post('name')));
+                $status = $this->input->post('status');
                 
-                $userInfo = array();
+                $productInfo = array();
                 
-                if(empty($password))
-                {
-                    $userInfo = array('email'=>$email, 'roleId'=>$roleId, 'name'=>$name,
-                                    'mobile'=>$mobile, 'updatedBy'=>$this->vendorId, 'updatedDtm'=>date('Y-m-d H:i:s'));
-                }
-                else
-                {
-                    $userInfo = array('email'=>$email, 'password'=>getHashedPassword($password), 'roleId'=>$roleId,
-                        'name'=>ucwords($name), 'mobile'=>$mobile, 'updatedBy'=>$this->vendorId, 
-                        'updatedDtm'=>date('Y-m-d H:i:s'));
-                }
                 
-                $result = $this->user_model->editUser($userInfo, $userId);
+                    $productInfo = array('name'=>$name, 'status'=>$status, 'modified'=>date('Y-m-d H:i:s'));
+               
+                
+                $result = $this->products_model->editProduct($productInfo, $prodId);
                 
                 if($result == true)
                 {
-                    $this->session->set_flashdata('success', 'User updated successfully');
+                    $this->session->set_flashdata('success', 'Product updated successfully');
                 }
                 else
                 {
-                    $this->session->set_flashdata('error', 'User updation failed');
+                    $this->session->set_flashdata('error', 'Product updation failed');
                 }
                 
-                redirect('userListing');
+                redirect('productListing');
             }
         }
     }
@@ -245,7 +249,7 @@ class Products extends BaseController
             $userId = $this->input->post('userId');
             $userInfo = array('isDeleted'=>1,'updatedBy'=>$this->vendorId, 'updatedDtm'=>date('Y-m-d H:i:s'));
             
-            $result = $this->user_model->deleteUser($userId, $userInfo);
+            $result = $this->products_model->deleteUser($userId, $userInfo);
             
             if ($result > 0) { echo(json_encode(array('status'=>TRUE))); }
             else { echo(json_encode(array('status'=>FALSE))); }
@@ -283,7 +287,7 @@ class Products extends BaseController
             $oldPassword = $this->input->post('oldPassword');
             $newPassword = $this->input->post('newPassword');
             
-            $resultPas = $this->user_model->matchOldPassword($this->vendorId, $oldPassword);
+            $resultPas = $this->products_model->matchOldPassword($this->vendorId, $oldPassword);
             
             if(empty($resultPas))
             {
@@ -295,7 +299,7 @@ class Products extends BaseController
                 $usersData = array('password'=>getHashedPassword($newPassword), 'updatedBy'=>$this->vendorId,
                                 'updatedDtm'=>date('Y-m-d H:i:s'));
                 
-                $result = $this->user_model->changePassword($this->vendorId, $usersData);
+                $result = $this->products_model->changePassword($this->vendorId, $usersData);
                 
                 if($result > 0) { $this->session->set_flashdata('success', 'Password updation successful'); }
                 else { $this->session->set_flashdata('error', 'Password updation failed'); }

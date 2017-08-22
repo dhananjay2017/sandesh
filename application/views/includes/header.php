@@ -101,8 +101,8 @@
                 <span>Product</span>
               </a>
 			  <ul class="treeview-menu" style="display: none;">
-				<li><a href="#"><i class="fa fa-circle-o"></i> Add Product</a></li>
-				<li><a href="#"><i class="fa fa-circle-o"></i> List Product</a></li>
+				<li><a href="<?php echo base_url(); ?>addNewProduct"><i class="fa fa-circle-o"></i> Add Product</a></li>
+				<li><a href="<?php echo base_url(); ?>productListing"><i class="fa fa-circle-o"></i> List Product</a></li>
 				<li><a href="#"><i class="fa fa-circle-o"></i> Add Product Items</a></li>
 				<li><a href="#"><i class="fa fa-circle-o"></i> List Product Item </a></li>
 			  </ul>
