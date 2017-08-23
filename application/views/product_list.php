@@ -53,7 +53,9 @@
                     <div class="box-tools">
                         <form action="<?php echo base_url() ?>productListing" method="POST" id="searchList">
                             <div class="input-group">
-                              <input type="text" name="searchText" value="" class="form-control input-sm pull-right" style="width: 150px;" placeholder="Search"/>
+                              <input type="text" name="searchText" value="<?php echo $searchText; ?>" class="form-control input-sm pull-right" style="width: 150px;" placeholder="Search"/>
+							  <input type="hidden" name="sort_field" id="sort_field" value='<?php echo $sort_field; ?>' />
+							  <input type="hidden" name="sort_ord" id="sort_ord" value='<?php echo $sort_ord; ?>' />
                               <div class="input-group-btn">
                                 <button class="btn btn-sm btn-default searchList"><i class="fa fa-search"></i></button>
                               </div>
@@ -64,21 +66,24 @@
                 <div class="box-body table-responsive no-padding">
                   <table class="table table-hover">
                     <tr>
-                      <th>Id</th>
-                      <th>Name</th>
-                      <th>Status</th>
-                      <th>Created On</th>
-                      <th>Modified On</th>
+                      <th>#</th>
+                      <th><a href="#" onclick="sortData('name')">Name</a></th>
+                      <th><a href="#" onclick="sortData('status')">Status</th>
+                      <th><a href="#" onclick="sortData('created')">Created On</th>
+                      <th><a href="#" onclick="sortData('modified')">Modified On</th>
                       <th class="text-center">Actions</th>
                     </tr>
                     <?php
                     if(!empty($productRecords))
                     {
+					 
+					  if($segment == '')
+					    $segment = 0;
                         foreach($productRecords as $record)
                         {
                     ?>
                     <tr>
-                      <td><?php echo $record->id ?></td>
+                      <td><?php echo ++$segment ?></td>
                       <td><?php echo $record->name ?></td>
                       <td><?php if($record->status == 1) echo "Active"; else echo "Inactive"; ?></td>
                       <td><?php echo $record->created ?></td>
@@ -89,6 +94,7 @@
                       </td>
                     </tr>
                     <?php
+					 
                         }
                     }
 					else
@@ -122,4 +128,16 @@
             jQuery("#searchList").submit();
         });
     });
+	
+	function sortData(field)
+	{
+	   jQuery("#sort_field").val(field);
+	   var sortOrd = jQuery("#sort_ord").val();
+	   if(sortOrd == "asc")
+	     jQuery("#sort_ord").val('desc');
+	   else
+	     jQuery("#sort_ord").val('asc');
+		
+		jQuery("#searchList").submit();
+	}
 </script>

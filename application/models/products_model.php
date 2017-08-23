@@ -6,10 +6,14 @@ class Products_model extends CI_Model
      * This function is used to get the product listing count
      * @return number $count : This is row count
      */
-    function productListingCount()
+    function productListingCount($searchText = '')
     {
         $this->db->select('BaseTbl.*');
         $this->db->from('tbl_products as BaseTbl');
+		if(!empty($searchText)) {
+            $likeCriteria = "(BaseTbl.name  LIKE '%".$searchText."%')";
+            $this->db->where($likeCriteria);
+        }
         $query = $this->db->get();
         
         return count($query->result());
@@ -22,10 +26,15 @@ class Products_model extends CI_Model
      * @param number $segment : This is pagination limit
      * @return array $result : This is result
      */
-    function productListing($page, $segment)
+    function productListing($searchText = '', $sort_field, $sort_ord, $page, $segment)
     {
         $this->db->select('BaseTbl.*');
         $this->db->from('tbl_products as BaseTbl');
+		 if(!empty($searchText)) {
+            $likeCriteria = "(BaseTbl.name  LIKE '%".$searchText."%')";
+            $this->db->where($likeCriteria);
+        }
+		$this->db->order_by("BaseTbl.$sort_field $sort_ord"); 
         $this->db->limit($page, $segment);
         $query = $this->db->get();
         

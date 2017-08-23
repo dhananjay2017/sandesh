@@ -32,14 +32,34 @@ class Products extends BaseController
         }
         else
         {
-            
+             $searchText = $this->input->post('searchText');
+             $data['searchText'] = $searchText;
+			 
+			 $sort_field = $this->input->post('sort_field');
+			 
+			 if(isset($sort_field) && !empty($sort_field))
+                $data['sort_field'] = $sort_field;
+			 else
+			    $data['sort_field'] = 'name';
+			 
+			 $sort_ord = $this->input->post('sort_ord');
+			 
+			 if(isset($sort_ord) && !empty($sort_ord))
+                $data['sort_ord'] = $sort_ord;
+			 else
+			    $data['sort_ord'] = 'asc';
+             
+			 
             $this->load->library('pagination');
             
-            $count = $this->products_model->productListingCount();
+            $count = $this->products_model->productListingCount($searchText);
 
-			$returns = $this->paginationCompress ( "productListing/", $count, 2 );
+			$returns = $this->paginationCompress ( "productListing/", $count, 5 );
+			
+			$data['page'] = $returns["page"];
+			$data['segment'] = $returns["segment"];
             
-            $data['productRecords'] = $this->products_model->productListing($returns["page"], $returns["segment"]);
+            $data['productRecords'] = $this->products_model->productListing($searchText, $data['sort_field'], $data['sort_ord'], $returns["page"], $returns["segment"]);
             
             $this->global['pageTitle'] = 'Sandesh : Product Listing';
             
@@ -58,9 +78,26 @@ class Products extends BaseController
         }
         else
         {
-            $this->global['pageTitle'] = 'Sandesh : Add New User';
+            $this->global['pageTitle'] = 'Sandesh : Add New Product';
 
             $this->loadViews("addNewProduct", $this->global, NULL, NULL);
+        }
+    }
+	
+	 /**
+     * This function is used to load the add new form
+     */
+    function addNewProdItem()
+    {
+        if($this->isAdmin() == TRUE)
+        {
+            $this->loadThis();
+        }
+        else
+        {
+            $this->global['pageTitle'] = 'Sandesh : Add New Product Item';
+
+            $this->loadViews("addNewProductItem", $this->global, NULL, NULL);
         }
     }
 
