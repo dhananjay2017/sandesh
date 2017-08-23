@@ -2,16 +2,26 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        <i class="fa fa-users"></i> Product Management
+        <i class="fa fa-users"></i> Product Item Management
         <small>Add, Edit, Delete</small>
       </h1>
     </section>
     <section class="content">
+
         <div class="row">
-            <div class="col-xs-12 text-right">
-                <div class="form-group">
-                    <a class="btn btn-primary" href="<?php echo base_url(); ?>addNewProduct"><i class="fa fa-plus"></i> Add New</a>
-                </div>
+		    <div class="col-sm-6">
+			   <form action="<?php echo base_url() ?>itemListing" method="POST" id="all_prod">
+					<select onchange="getProdItem();" class="form-control required" name="prod" id="prod">
+					
+					 <option value="">All Product</option>
+					<?php foreach($products as $prod) {?>
+					  <option <?php if($pid==$prod->id) echo "selected='selected'" ?> value="<?php echo $prod->id; ?>"><?php echo $prod->name; ?></option>
+					<?php } ?>
+					</select>
+				</form>
+			</div>
+            <div class="col-sm-6 text-right">
+                    <a class="btn btn-primary" href="<?php echo base_url(); ?>addNewProdItem"><i class="fa fa-plus"></i>Add New Item</a>
             </div>
         </div>
 		  <div class="row">
@@ -49,13 +59,15 @@
             <div class="col-xs-12">
               <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">Product List</h3>
+                    <h3 class="box-title">Item List</h3>
                     <div class="box-tools">
-                        <form action="<?php echo base_url() ?>productListing" method="POST" id="searchList">
+                        <form action="<?php echo base_url() ?>itemListing" method="POST" id="searchList">
                             <div class="input-group">
+							  
                               <input type="text" name="searchText" value="<?php echo $searchText; ?>" class="form-control input-sm pull-right" style="width: 150px;" placeholder="Search"/>
 							  <input type="hidden" name="sort_field" id="sort_field" value='<?php echo $sort_field; ?>' />
 							  <input type="hidden" name="sort_ord" id="sort_ord" value='<?php echo $sort_ord; ?>' />
+							  <input type="hidden" name="pid" id="pid" value='<?php echo $pid; ?>' />
                               <div class="input-group-btn">
                                 <button class="btn btn-sm btn-default searchList"><i class="fa fa-search"></i></button>
                               </div>
@@ -68,10 +80,11 @@
 				   <thead>
                     <tr>
                       <th>#</th>
-                      <th <?php if($sort_field == "name" && $sort_ord=="asc") { ?> class="sorting_asc" <?php } else if($sort_field == "name" && $sort_ord=="desc"){ ?> class="sorting_desc" <?php } ?> ><a href="#" onclick="sortData('name')">Name</a></th>
+					  <th>Product</th>
+                      <th <?php if($sort_field == "name" && $sort_ord=="asc") { ?> class="sorting_asc" <?php } else if($sort_field == "name" && $sort_ord=="desc"){ ?> class="sorting_desc" <?php } ?> ><a href="#" onclick="sortData('name')">Item</a></th>
+					   <th <?php if($sort_field == "created" && $sort_ord=="asc") { ?> class="sorting_asc" <?php } else if($sort_field == "created" && $sort_ord=="desc"){ ?> class="sorting_desc" <?php } ?>><a href="#" onclick="sortData('created')">Created On</a></th>
                       <th>Status</th>
-                      <th <?php if($sort_field == "created" && $sort_ord=="asc") { ?> class="sorting_asc" <?php } else if($sort_field == "created" && $sort_ord=="desc"){ ?> class="sorting_desc" <?php } ?>><a href="#" onclick="sortData('created')">Created On</a></th>
-                      <th <?php if($sort_field == "modified" && $sort_ord=="asc") { ?> class="sorting_asc" <?php } else if($sort_field == "modified" && $sort_ord=="desc"){ ?> class="sorting_desc" <?php } ?>><a href="#" onclick="sortData('modified')">Modified On</a></th>
+                      <!--<th <?php if($sort_field == "modified" && $sort_ord=="asc") { ?> class="sorting_asc" <?php } else if($sort_field == "modified" && $sort_ord=="desc"){ ?> class="sorting_desc" <?php } ?>><a href="#" onclick="sortData('modified')">Modified On</a></th>-->
                       <th class="text-center">Actions</th>
                     </tr>
 				</thead>
@@ -87,10 +100,11 @@
                     ?>
                     <tr>
                       <td><?php echo ++$segment ?></td>
+					  <td><?php echo $record->prod_name ?></td>
                       <td><?php echo $record->name ?></td>
+					  <td><?php echo $record->created ?></td>
                       <td><?php if($record->status == 1) echo "Active"; else echo "Inactive"; ?></td>
-                      <td><?php echo $record->created ?></td>
-                      <td><?php echo $record->modified ?></td>
+                      <!--<td><?php echo $record->modified ?></td>-->
                       <td class="text-center">
                           <a class="btn btn-sm btn-info" href="<?php echo base_url().'editProduct/'.$record->id; ?>"><i class="fa fa-pencil"></i></a>
                           <a class="btn btn-sm btn-danger deleteUser" href="#" data-productid="<?php echo $record->id; ?>"><i class="fa fa-trash"></i></a>
@@ -121,14 +135,14 @@
         </div>
     </section>
 </div>
-<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/addProduct.js" charset="utf-8"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/addProductItem.js" charset="utf-8"></script>
 <script type="text/javascript">
     jQuery(document).ready(function(){
         jQuery('ul.pagination li a').click(function (e) {
             e.preventDefault();            
             var link = jQuery(this).get(0).href;            
             var value = link.substring(link.lastIndexOf('/') + 1);
-            jQuery("#searchList").attr("action", baseURL + "productListing/" + value);
+            jQuery("#searchList").attr("action", baseURL + "itemListing/" + value);
             jQuery("#searchList").submit();
         });
     });
@@ -148,4 +162,10 @@
 		
 		jQuery("#searchList").submit();
 	}
+	
+	function getProdItem()
+	 {
+	   jQuery("#pid").val(jQuery('#prod').val());
+	   jQuery("#searchList").submit();
+	 }
 </script>

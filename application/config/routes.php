@@ -53,7 +53,11 @@ $route['addNewProd'] = "products/addNewProd";
 $route['editProduct'] = "products/editProduct";
 $route['editProduct/(:num)'] = "products/editProduct/$1";
 $route['editProd'] = "products/editProd";
-$route['deleteProduct'] = "products/deleteProduct";
+$route['deleteProduct'] = "products/deleteProduct"; 
+$route['addNewProdItem'] = "products/addNewProdItem"; 
+$route['addNewItem'] = "products/addNewItem"; 
+$route['itemListing'] = "products/itemListing";
+$route['itemListing/(:num)'] = "products/itemListing/$1";
 //product routing end ------------------------------
 $route['loginMe'] = 'login/loginMe';
 $route['dashboard'] = 'user';

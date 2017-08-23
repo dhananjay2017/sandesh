@@ -66,6 +66,62 @@ class Products extends BaseController
             $this->loadViews("product_list", $this->global, $data, NULL);
         }
     }
+	
+	
+	 /**
+     * This function is used to load the product list
+     */
+    function itemListing()
+    {
+        if($this->isAdmin() == TRUE)
+        {
+            $this->loadThis();
+        }
+        else
+        {
+             $searchText = $this->input->post('searchText');
+             $data['searchText'] = $searchText;
+			 
+			 $sort_field = $this->input->post('sort_field');
+			 
+			 if(isset($sort_field) && !empty($sort_field))
+                $data['sort_field'] = $sort_field;
+			 else
+			    $data['sort_field'] = 'name';
+			 
+			 $sort_ord = $this->input->post('sort_ord');
+			 
+			 if(isset($sort_ord) && !empty($sort_ord))
+                $data['sort_ord'] = $sort_ord;
+			 else
+			    $data['sort_ord'] = 'asc';
+				
+			 $pid = $this->input->post('pid');
+			 
+			 if(isset($pid) && !empty($pid))
+                $data['pid'] = $pid;
+			 else
+			    $data['pid'] = '';
+             
+			 
+            $this->load->library('pagination');
+            
+            $count = $this->products_model->itemListingCount($searchText, $data['pid']);
+
+			$returns = $this->paginationCompress ( "itemListing/", $count, 5);
+			
+			$data['page'] = $returns["page"];
+			$data['segment'] = $returns["segment"];
+			
+			 $data['products'] = $this->products_model->getProducts();
+            
+            $data['productRecords'] = $this->products_model->itemListing($searchText, $data['pid'], $data['sort_field'], $data['sort_ord'], $returns["page"], $returns["segment"]);
+            
+            $this->global['pageTitle'] = 'Sandesh : Product Item Listing';
+            
+            $this->loadViews("item_list", $this->global, $data, NULL);
+        }
+    }
 
     /**
      * This function is used to load the add new form
@@ -95,28 +151,72 @@ class Products extends BaseController
         }
         else
         {
+		    $data['products'] = $this->products_model->getProducts();
+			
+			//print_r($data['products']);
+			
             $this->global['pageTitle'] = 'Sandesh : Add New Product Item';
 
-            $this->loadViews("addNewProductItem", $this->global, NULL, NULL);
+            $this->loadViews("addNewProductItem", $this->global, $data, NULL);
         }
     }
 
-    /**
-     * This function is used to check whether email already exist or not
+        /**
+     * This function is used to add new user to the system
      */
-    function checkEmailExists()
+    function addNewItem()
     {
-        $userId = $this->input->post("userId");
-        $email = $this->input->post("email");
-
-        if(empty($userId)){
-            $result = $this->products_model->checkEmailExists($email);
-        } else {
-            $result = $this->products_model->checkEmailExists($email, $userId);
+        if($this->isAdmin() == TRUE)
+        {
+            $this->loadThis();
         }
-
-        if(empty($result)){ echo("true"); }
-        else { echo("false"); }
+        else
+        {
+            $this->load->library('form_validation');
+            
+            $this->form_validation->set_rules('name','name','trim|required|max_length[100]|xss_clean');
+			$this->form_validation->set_rules('hsn_gsn_code','hsn_gsn_code','trim|required|max_length[50]|xss_clean');
+			$this->form_validation->set_rules('sgst','sgst','trim|required|max_length[50]|xss_clean');
+			$this->form_validation->set_rules('cgst','cgst','trim|required|max_length[50]|xss_clean');
+			$this->form_validation->set_rules('igst','igst','trim|required|max_length[50]|xss_clean');
+            
+            if($this->form_validation->run() == FALSE)
+            {
+                $this->addNewProdItem();
+            }
+            else
+            {
+                $pid = $this->input->post('pid');
+				$hsn_gsn_code = $this->input->post('hsn_gsn_code');
+				$name = ucwords(strtolower($this->input->post('name')));
+                $sgst = $this->input->post('sgst');
+				$cgst = $this->input->post('cgst');
+				$igst = $this->input->post('igst');
+				$status = $this->input->post('status');
+                
+                $productInfo = array( 'pid'=> $pid, 
+									  'name'=> $name, 
+									  'hsn_gsn_code'=> $hsn_gsn_code, 
+									  'sgst'=> $sgst, 
+									  'cgst'=> $cgst, 
+									  'igst'=> $igst,
+									  'status'=>$status);
+                
+                
+                $result = $this->products_model->addNewProductItem($productInfo);
+                
+                if($result > 0)
+                {
+                    $this->session->set_flashdata('success', 'New product item has been created successfully');
+                }
+                else
+                {
+                    $this->session->set_flashdata('error', 'Product item creation failed');
+                }
+                
+                redirect('addNewProdItem');
+            }
+        }
     }
     
     /**

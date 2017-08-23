@@ -5,7 +5,9 @@
     <title><?php echo $pageTitle; ?></title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 3.3.4 -->
-    <link href="<?php echo base_url(); ?>assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />    
+    <link href="<?php echo base_url(); ?>assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" /> 
+
+    <link href="<?php echo base_url(); ?>assets/bootstrap/css/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />	
     <!-- FontAwesome 4.3.0 -->
     <link href="<?php echo base_url(); ?>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <!-- Ionicons 2.0.0 -->
@@ -103,8 +105,8 @@
 			  <ul class="treeview-menu" style="display: none;">
 				<li><a href="<?php echo base_url(); ?>addNewProduct"><i class="fa fa-circle-o"></i> Add Product</a></li>
 				<li><a href="<?php echo base_url(); ?>productListing"><i class="fa fa-circle-o"></i> List Product</a></li>
-				<li><a href="#"><i class="fa fa-circle-o"></i> Add Product Items</a></li>
-				<li><a href="#"><i class="fa fa-circle-o"></i> List Product Item </a></li>
+				<li><a href="<?php echo base_url(); ?>addNewProdItem"><i class="fa fa-circle-o"></i> Add Product Items</a></li>
+				<li><a href="<?php echo base_url(); ?>itemListing"><i class="fa fa-circle-o"></i> List Product Item </a></li>
 			  </ul>
             </li>
             <li class="treeview">

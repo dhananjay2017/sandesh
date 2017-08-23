@@ -18,6 +18,26 @@ class Products_model extends CI_Model
         
         return count($query->result());
     }
+	
+	/**
+     * This function is used to get the product listing count
+     * @return number $count : This is row count
+     */
+    function itemListingCount($searchText = '', $pid = '')
+    {
+        $this->db->select('BaseTbl.*');
+        $this->db->from('tbl_product_items as BaseTbl');
+		if(!empty($searchText)) {
+            $likeCriteria = "(BaseTbl.name  LIKE '%".$searchText."%')";
+            $this->db->where($likeCriteria);
+        }
+		if(!empty($pid)) {
+			$this->db->where("pid", $pid); 
+        }
+        $query = $this->db->get();
+        
+        return count($query->result());
+    }
     
     /**
      * This function is used to get the user listing count
@@ -34,6 +54,35 @@ class Products_model extends CI_Model
             $likeCriteria = "(BaseTbl.name  LIKE '%".$searchText."%')";
             $this->db->where($likeCriteria);
         }
+		$this->db->order_by("BaseTbl.$sort_field $sort_ord"); 
+        $this->db->limit($page, $segment);
+        $query = $this->db->get();
+        
+        $result = $query->result();        
+        return $result;
+    }
+	
+	
+	/**
+     * This function is used to get the user listing count
+     * @param string $searchText : This is optional search text
+     * @param number $page : This is pagination offset
+     * @param number $segment : This is pagination limit
+     * @return array $result : This is result
+     */
+    function itemListing($searchText = '', $pid='', $sort_field, $sort_ord, $page, $segment)
+    {
+        $this->db->select('BaseTbl.*, prod.name as prod_name');
+        $this->db->from('tbl_product_items as BaseTbl');
+		 $this->db->join('tbl_products as prod', 'prod.id = BaseTbl.pid','left');
+		 if(!empty($searchText)) {
+            $likeCriteria = "(BaseTbl.name  LIKE '%".$searchText."%')";
+            $this->db->where($likeCriteria);
+        }
+		if(!empty($pid)) {
+			$this->db->where("pid", $pid); 
+        }
+		
 		$this->db->order_by("BaseTbl.$sort_field $sort_ord"); 
         $this->db->limit($page, $segment);
         $query = $this->db->get();
@@ -78,13 +127,31 @@ class Products_model extends CI_Model
     
     
     /**
-     * This function is used to add new user to system
+     * This function is used to add new product to system
      * @return number $insert_id : This is last inserted id
      */
-    function addNewProduct($userInfo)
+    function addNewProduct($prodInfo)
     {
         $this->db->trans_start();
-        $this->db->insert('tbl_products', $userInfo);
+        $this->db->insert('tbl_products', $prodInfo);
+        
+        $insert_id = $this->db->insert_id();
+        
+        $this->db->trans_complete();
+        
+        return $insert_id;
+    }
+	
+	
+	 
+    /**
+     * This function is used to add new product item to system
+     * @return number $insert_id : This is last inserted id
+     */
+    function addNewProductItem($prodInfo)
+    {
+        $this->db->trans_start();
+        $this->db->insert('tbl_product_items', $prodInfo);
         
         $insert_id = $this->db->insert_id();
         
@@ -105,6 +172,20 @@ class Products_model extends CI_Model
         $this->db->where('id', $prodId);
         $query = $this->db->get();
         
+        return $query->result();
+    }
+	
+	 /**
+     * This function used to get user information by id
+     * @param number $userId : This is user id
+     * @return array $result : This is user information   
+     */
+    function getProducts()
+    {
+        $this->db->select('id, name');
+        $this->db->from('tbl_products');
+		$this->db->order_by("name asc");
+        $query = $this->db->get();   
         return $query->result();
     }
 	
