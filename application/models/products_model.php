@@ -175,6 +175,22 @@ class Products_model extends CI_Model
         return $query->result();
     }
 	
+	
+	 /**
+     * This function used to get user information by id
+     * @param number $userId : This is user id
+     * @return array $result : This is user information
+     */
+    function getItemInfo($itemId)
+    {
+        $this->db->select('*');
+        $this->db->from('tbl_product_items');
+        $this->db->where('id', $itemId);
+        $query = $this->db->get();
+        
+        return $query->result();
+    }
+	
 	 /**
      * This function used to get user information by id
      * @param number $userId : This is user id
@@ -199,6 +215,42 @@ class Products_model extends CI_Model
 	  
 	    $this->db->where('id', $prodId);
         $deleted = $this->db->delete('tbl_products'); 
+		
+		if($deleted)
+		 {
+		  $this->deleteProdItems($prodId);
+          return true;
+		 }
+		else
+		  return false;
+    }
+	
+	 /**
+     * This function used to delete product  by id
+     * @param number $userId : This is user id
+     * @return array $result : This is user information
+     */
+    function deleteItem($itemId)
+    {
+	  
+	    $this->db->where('id', $itemId);
+        $deleted = $this->db->delete('tbl_product_items'); 
+		if($deleted)
+          return true;
+		else
+		  return false;
+    }
+	
+	 /**
+     * This function used to delete product items  by id
+     * @param number $userId : This is user id
+     * @return array $result : This is user information
+     */
+    function deleteProdItems($pid)
+    {
+	  
+	    $this->db->where('pid', $pid);
+        $deleted = $this->db->delete('tbl_product_items'); 
 		if($deleted)
           return true;
 		else
@@ -216,6 +268,19 @@ class Products_model extends CI_Model
     {
         $this->db->where('id', $prodId);
         $this->db->update('tbl_products', $prodInfo);
+        
+        return TRUE;
+    }
+	
+	  /**
+     * This function is used to update the user information
+     * @param array $userInfo : This is users updated information
+     * @param number $userId : This is user id
+     */
+    function editItem($ItemInfo, $ItemId)
+    {
+        $this->db->where('id', $ItemId);
+        $this->db->update('tbl_product_items', $ItemInfo);
         
         return TRUE;
     }

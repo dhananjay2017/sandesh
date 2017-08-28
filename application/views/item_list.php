@@ -106,8 +106,8 @@
                       <td><?php if($record->status == 1) echo "Active"; else echo "Inactive"; ?></td>
                       <!--<td><?php echo $record->modified ?></td>-->
                       <td class="text-center">
-                          <a class="btn btn-sm btn-info" href="<?php echo base_url().'editProduct/'.$record->id; ?>"><i class="fa fa-pencil"></i></a>
-                          <a class="btn btn-sm btn-danger deleteUser" href="#" data-productid="<?php echo $record->id; ?>"><i class="fa fa-trash"></i></a>
+                          <a class="btn btn-sm btn-info" href="<?php echo base_url().'editItem/'.$record->id; ?>"><i class="fa fa-pencil"></i></a>
+                          <a class="btn btn-sm btn-danger deleteItem" href="#" data-itemid="<?php echo $record->id; ?>"><i class="fa fa-trash"></i></a>
                       </td>
                     </tr>
                     <?php

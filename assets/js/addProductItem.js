@@ -32,3 +32,31 @@ $(document).ready(function(){
 		}
 	});
 });
+
+
+
+jQuery(document).ready(function(){
+	
+	jQuery(document).on("click", ".deleteItem", function(){
+		var pId = $(this).data("itemid"),
+			hitURL = baseURL + "deleteItem",
+			currentRow = $(this);
+		
+		var confirmation = confirm("Are you sure to delete this Product item ?");
+		
+		if(confirmation)
+		{
+			jQuery.ajax({
+			type : "POST",
+			dataType : "json",
+			url : hitURL,
+			data : { itemId : pId } 
+			}).done(function(data){
+				if(data.status = true) { currentRow.parents('tr').remove(); alert("Product item successfully deleted"); }
+				else if(data.status = false) { alert("Product item deletion failed"); }
+				else { alert("Access denied..!"); }
+			});
+		}
+	});
+	
+});

@@ -218,6 +218,66 @@ class Products extends BaseController
             }
         }
     }
+	
+	
+	     /**
+     * This function is used to add new user to the system
+     */
+    function editItm()
+    {
+        if($this->isAdmin() == TRUE)
+        {
+            $this->loadThis();
+        }
+        else
+        {
+            $this->load->library('form_validation');
+            
+            $this->form_validation->set_rules('name','name','trim|required|max_length[100]|xss_clean');
+			$this->form_validation->set_rules('hsn_gsn_code','hsn_gsn_code','trim|required|max_length[50]|xss_clean');
+			$this->form_validation->set_rules('sgst','sgst','trim|required|max_length[50]|xss_clean');
+			$this->form_validation->set_rules('cgst','cgst','trim|required|max_length[50]|xss_clean');
+			$this->form_validation->set_rules('igst','igst','trim|required|max_length[50]|xss_clean');
+            $itemId = $this->input->post('id');
+            if($this->form_validation->run() == FALSE)
+            {
+                $this->editItem($itemId);
+            }
+            else
+            {
+                $pid = $this->input->post('pid');
+				$hsn_gsn_code = $this->input->post('hsn_gsn_code');
+				$name = ucwords(strtolower($this->input->post('name')));
+                $sgst = $this->input->post('sgst');
+				$cgst = $this->input->post('cgst');
+				$igst = $this->input->post('igst');
+				$status = $this->input->post('status');
+                
+                $ItemInfo = array( 'pid'=> $pid, 
+									  'name'=> $name, 
+									  'hsn_gsn_code'=> $hsn_gsn_code, 
+									  'sgst'=> $sgst, 
+									  'cgst'=> $cgst, 
+									  'igst'=> $igst,
+									  'status'=>$status);
+                
+                
+                $result = $this->products_model->editItem($ItemInfo, $itemId);
+                
+                if($result == true)
+                {
+                    $this->session->set_flashdata('success', 'Product item updated successfully');
+                }
+                else
+                {
+                    $this->session->set_flashdata('error', 'Product item updation failed');
+                }
+                
+                redirect('itemListing');
+
+            }
+        }
+    }
     
     /**
      * This function is used to add new user to the system
@@ -288,6 +348,32 @@ class Products extends BaseController
         }
     }
 	
+	/**
+     * This function is used load product item edit information
+     * @param number $userId : Optional : This is item id
+     */
+    function editItem($itemId = NULL)
+    {
+        if($this->isAdmin() == TRUE)
+        {
+            $this->loadThis();
+        }
+        else
+        {
+            if($itemId == null)
+            {
+                redirect('itemListing');
+            }
+            $data['products'] = $this->products_model->getProducts();
+			
+            $data['itemInfo'] = $this->products_model->getItemInfo($itemId);
+            
+            $this->global['pageTitle'] = 'Sandesh : Edit Product Item';
+            
+            $this->loadViews("editItem", $this->global, $data, NULL);
+        }
+    }
+	
 	 function deleteProduct()
 		{
 		   $productId = $this->input->post('prodId');
@@ -306,6 +392,41 @@ class Products extends BaseController
 				}
 				
 				$deleted = $this->products_model->deleteProd($productId);
+
+			}
+			
+			if($deleted)
+                {
+                    $data['status'] = true;
+                }
+                else
+                {
+                    $data['status'] = false;
+                }
+                
+                echo json_encode($data);
+		}
+		
+		
+		
+	function deleteItem()
+		{
+		   $itemId = $this->input->post('itemId');
+
+			$data = array();
+			
+			if($this->isAdmin() == TRUE)
+			{
+				$this->loadThis();
+			}
+			else
+			{
+				if($itemId == null)
+				{
+					$data['status'] = false;
+				}
+				
+				$deleted = $this->products_model->deleteItem($itemId);
 
 			}
 			
